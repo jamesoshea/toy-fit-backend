@@ -14,24 +14,4 @@ const app = express();
 const router = require('./router');
 app.use('/', router);
 
-const DateSchema = new mongoose.Schema({
-	dateString: {
-		type: String,
-	},
-	cycle: {
-		type: Boolean,
-	},
-	lowCarbs: {
-		type: Boolean,
-	},
-	hiit: {
-		type: Boolean,
-	},
-	strength: {
-		type: Boolean,
-	},
-});
-
-app.use(express.json());
-
 app.listen(3001, () => console.log('Example app listening on port 3000!'));
