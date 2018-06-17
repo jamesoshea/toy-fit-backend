@@ -5,16 +5,30 @@ const DateStatus = require('./models/DateStatus');
 
 router.use(express.json());
 
-router.get('/', (req, res) => res.send('Hello World!'));
-
-router.get('/dateStatuses', (req, res) => {
-	res.send('hello from GET dateStatuses');
+router.get('/dateStatuses', async (req, res) => {
+	const existsAlready = await DateStatus.find((err, result) => {
+		if (err) {
+			res.sendStatus(500);
+		}
+		return result;
+	});
+	if (existsAlready) {
+		res.send(existsAlready);
+	}
 });
 
-router.get('/dateStatus', (req, res) => {
-	// const cleanDate = `${req.body.date.getDate()}-${req.body.date.getMonth() +
-	// 	1}-${req.body.date.getFullYear()}`;
-	DateStatus.findOne({ dateString: cleanDate });
+router.get('/dateStatus/:dateString', async (req, res) => {
+	const existsAlready = await DateStatus.where({
+		dateString: req.params.dateString,
+	}).findOne((err, result) => {
+		if (err) {
+			res.sendStatus(500);
+		}
+		return result;
+	});
+	if (existsAlready) {
+		res.send(existsAlready);
+	}
 });
 
 router.post('/dateStatus', async (req, res) => {
