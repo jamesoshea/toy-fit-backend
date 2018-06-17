@@ -2,7 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+const secrets = require('./config');
+
+mongoose.connect(
+	`mongodb://${secrets.user}:${
+		secrets.password
+	}@ds261540.mlab.com:61540/toy-fit`,
+);
+
 const app = express();
+const router = require('./router');
+app.use('/', router);
 
 const DateSchema = new mongoose.Schema({
 	dateString: {
@@ -22,20 +32,6 @@ const DateSchema = new mongoose.Schema({
 	},
 });
 
-api.use(express.json());
+app.use(express.json());
 
-app.get('/', (req, res) => res.send('Hello World!'));
-
-app.get('dateStatuses', (req, res) => {
-	res.send('hello from GET dateStatuses');
-});
-
-app.get('dateStatus', (req, res) => {
-	res.send('hello from GET dateStatus');
-});
-
-app.post('dateStatus', (req, res) => {
-	res.send('hello from POST dateStatus');
-});
-
-app.listen(3000, () => console.log('Example app listening on port 3000!'));
+app.listen(3001, () => console.log('Example app listening on port 3000!'));
