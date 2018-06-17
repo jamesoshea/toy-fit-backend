@@ -1,11 +1,14 @@
 const express = require('express');
+const cors = require('cors');
+
 const router = express.Router();
 
 const DateStatus = require('./models/DateStatus');
 
 router.use(express.json());
+router.use(cors());
 
-router.get('/dateStatuses', async (req, res) => {
+router.get('/api/dateStatuses', async (req, res) => {
 	const existsAlready = await DateStatus.find((err, result) => {
 		if (err) {
 			res.sendStatus(500);
@@ -17,7 +20,8 @@ router.get('/dateStatuses', async (req, res) => {
 	}
 });
 
-router.get('/dateStatus/:dateString', async (req, res) => {
+router.get('/api/dateStatus/:dateString', async (req, res) => {
+	console.log(req.body);
 	const existsAlready = await DateStatus.where({
 		dateString: req.params.dateString,
 	}).findOne((err, result) => {
@@ -31,7 +35,7 @@ router.get('/dateStatus/:dateString', async (req, res) => {
 	}
 });
 
-router.post('/dateStatus', async (req, res) => {
+router.post('/api/dateStatus', async (req, res) => {
 	const existsAlready = await DateStatus.where({
 		dateString: req.body.date,
 	}).findOne((err, result) => {
