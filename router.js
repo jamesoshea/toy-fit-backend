@@ -8,63 +8,69 @@ const DateStatus = require('./models/DateStatus');
 router.use(express.json());
 router.use(cors());
 
-router.get('/api/dateStatuses', async (req, res) => {
-	const existsAlready = await DateStatus.find((err, result) => {
+router.get('/api/dateStatuses', (req, res) => {
+	DateStatus.find((err, result) => {
 		if (err) {
 			res.sendStatus(500);
+			return;
 		}
-		return result;
+		if (result) {
+			res.status(200).json(result);
+			return;
+		}
+		res.status(404).send({ message: 'no entries found' });
+		return;
 	});
-	if (existsAlready) {
-		res.send(existsAlready);
-	}
 });
 
-router.get('/api/dateStatus/:dateString', async (req, res) => {
-	console.log(req.body);
-	const existsAlready = await DateStatus.where({
+router.get('/api/dateStatus/:dateString', (req, res) => {
+	DateStatus.where({
 		dateString: req.params.dateString,
 	}).findOne((err, result) => {
 		if (err) {
 			res.sendStatus(500);
+			return;
 		}
-		return result;
+		if (result) {
+			res.status(200).json(result);
+			return;
+		}
+		res.status(404).send({ message: 'you have already submitted today :)' });
+		return;
 	});
-	if (existsAlready) {
-		res.send(existsAlready);
-	}
 });
 
-router.post('/api/dateStatus', async (req, res) => {
-	const existsAlready = await DateStatus.where({
-		dateString: req.body.date,
+router.post('/api/dateStatus', (req, res) => {
+	DateStatus.where({
+		dateString: req.body.dateString,
 	}).findOne((err, result) => {
 		if (err) {
 			res.sendStatus(500);
+			return;
 		}
-		return result;
+		if (result) {
+			res.sendStatus(400);
+			return;
+		}
+		DateStatus.create(
+			{
+				dateString: req.body.dateString,
+				cycle: req.body.cycle,
+				strength: req.body.strength,
+				hiit: req.body.hiit,
+				lowCarbs: req.body.lowCarbs,
+				noAlcohol: req.body.noAlcohol,
+				noSmoking: req.body.noSmoking,
+			},
+			(err, newDateStatus) => {
+				if (err) {
+					res.sendStatus(500);
+					return;
+				}
+				res.sendStatus(200);
+				return;
+			},
+		);
 	});
-	if (existsAlready) {
-		res.sendStatus(400);
-		return;
-	}
-	DateStatus.create(
-		{
-			dateString: req.body.date,
-			cycle: req.body.cycle,
-			strength: req.body.strength,
-			hiit: req.body.hiit,
-			lowCarbs: req.body.lowCarbs,
-			noAlcohol: req.body.noAlcohol,
-			noSmoking: req.body.noSmoking,
-		},
-		(err, newDateStatus) => {
-			if (err) {
-				console.log('no');
-				res.sendStatus(500);
-			}
-			res.sendStatus(200);
-		},
-	);
 });
 module.exports = router;
